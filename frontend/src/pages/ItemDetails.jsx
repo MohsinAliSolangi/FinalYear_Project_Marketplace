@@ -336,228 +336,224 @@ const ItemDetails01 = () => {
                     {myArray.description}
                   </p>
 
-          
 
-
-  {myArray.auction
-  ?
-   <div className="meta-item-details style2">
-    <div className="item meta-price">
-                        <span className="heading">Current Bid</span>
-                        {bid > 0
-                          ?
-                          <div className="price">
-                            <div className="price-box">
-                              <h5>{bid}ETH</h5>
-                              <span>= $100.246</span>
-                            </div>
-                          </div>
-                          :
-                          <></>
-                        }
-    </div>
-      {myArray.time > 0
-      ?
-        NowTime < Time
-        ?
-            account?.toString().toLowerCase() === myArray.seller?.toString().toLowerCase()
-            ?
-                            <div className="item count-down">
-                              <span className="heading style-2">Countdown</span>
-                              {<Countdown date={Time * 1000} renderer={renderer} >
-                                <span>Auction is in progress</span>
-                              </Countdown>
-                              }
-                            </div>
-            :
-                            <div className="item count-down">
-                              <span className="heading style-2">Countdown</span>
-                              {<Countdown date={Time * 1000} renderer={renderer} >
-                                <span>Place Bid</span>
-                              </Countdown>
-                              }
-                            </div>
-        :
-        <>
-              {bid > 0 && bidder?.toString().toLowerCase() === account?.toString().toLowerCase()
-              ?
-                              <Link className="sc-button loadmore style bag fl-button pri-3">
-                                <span>Place a bid</span>
-                              </Link>
-              :
-                account?.toString().toLowerCase() !== myArray.seller?.toString().toLowerCase()
-                ?
-                <Link className="sc-button loadmore style bag fl-button pri-3">
-                                  <span> Auction has Ended</span>
-                </Link>
-                : 
-                  bid > 0
-                  ?
-                  <Link className="sc-button loadmore style bag fl-button pri-3">
-                  <span> Auction has Ended</span>
-                  </Link>
-                  :
-                  <Link className="sc-button loadmore style bag fl-button pri-3">
-                  <span> Take your NFT</span>
-                  </Link>
-
-      
-              }
-                            
-                      {account?.toString().toLowerCase() === myArray.seller?.toString().toLowerCase()
-                      ?
-                      <Link className="sc-button loadmore style bag fl-button pri-3">
-                                  <span>Cancel Listing</span>
-                      </Link>
-                      :
-                      <div></div>
-                      }
-                            
-
-                            <Link className="sc-button loadmore style bag fl-button pri-3">
-                              <span>Place a bid</span>
-                            </Link>
-        </>                    
-      : 
-     ''
-      }
-
-                    
-    </div>
-  :
-    <div>
-                      <div className="meta-item-details style2">
-                        <div className="item meta-price" style={{ marginLeft: "176px" }}>
-                          <span className="heading">Current Price</span>
-                          <div className="price">
-                            <div className="price-box">
-                              <h5> {ethers.utils.formatEther(myArray.totalPrice)} ETH</h5>
-                              <span> = $100.246</span>
-                            </div>
+              <div>
+                  <div className="meta-item-details style2">
+                    <div className="item meta-price">
+                      <span className="heading">Current Bid</span>
+                      {bid > 0
+                        ?
+                        <div className="price">
+                          <div className="price-box">
+                            <h5>{bid}ETH</h5>
+                            <span>= $100.246</span>
                           </div>
                         </div>
-                      </div>
-                      <Link
-                        onClick={() => buyMarketItem(myArray)}
-                        className="sc-button loadmore style bag fl-button pri-3"
-                      >
-                        <span>Buy</span>
-                      </Link>
-    </div>
-  }
-              
-  {/* //////////////////////////////////////// Bid History Section /////////////////////////////////////// */}
-              </div>
-              
-              
-              <div className="flat-tabs themesflat-tabs">
-                        <Tabs>
-                          <TabList>
-                            <Tab>Bid History</Tab>
-                            <Tab>Info</Tab>
-                            <Tab>Provenance</Tab>
-                          </TabList>
+                        :
+                        <></>
+                      }
+                    </div>
 
-                          <TabPanel>
-                            <ul className="bid-history-list">
-                              {dataHistory.map((item, index) => (
-                                <li key={index} item={item}>
-                                  <div className="content">
-                                    <div className="client">
-                                      <div className="sc-author-box style-2">
-                                        <div className="author-avatar">
-                                          <Link to="#">
-                                            <img
-                                              src={item.img}
-                                              alt="Axies"
-                                              className="avatar"
-                                            />
-                                          </Link>
-                                          <div className="badge"></div>
-                                        </div>
-                                        <div className="author-infor">
-                                          <div className="name">
-                                            <h6>
-                                              <Link to="/authors">
-                                                {item.name}{" "}
-                                              </Link>
-                                            </h6>{" "}
-                                            <span> place a bid</span>
-                                          </div>
-                                          <span className="time">{item.time}</span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className="price">
-                                      <h5>{item.price}</h5>
-                                      <span>= {item.priceChange}</span>
-                                    </div>
+                    {myArray.time > 0
+
+                      ?
+                      NowTime < Time
+
+                        ?
+                      //////yhn pe div's ko det krna hai fr aspe condition lagani hai //////////////////
+                        account?.toString().toLowerCase() === myArray.seller?.toString().toLowerCase()
+                          ?
+                          <div className="item count-down">
+                            <span className="heading style-2">Countdown</span>
+                            {<Countdown date={Time * 1000} renderer={renderer}/>}
+                            <div>
+                            <Link className="sc-button loadmore style bag fl-button pri-3">
+                              <span>GET NFT</span>
+                            </Link>
+                          </div>
+                          </div>
+                          :
+                          <div className="item count-down">
+                            <span className="heading style-2">Countdown</span>
+                            {<Countdown date={Time * 1000} renderer={renderer} >
+                              <span>Place Bid</span>
+                            </Countdown>
+                            }
+                          </div>
+                        :
+
+                        bid > 0 && bidder?.toString().toLowerCase() === account?.toString().toLowerCase()
+                          ?
+                          <div>
+                            <Link className="sc-button loadmore style bag fl-button pri-3">
+                              <span>GET NFT</span>
+                            </Link>
+                          </div>
+                          :
+                          account?.toString().toLowerCase() !== myArray.seller?.toString().toLowerCase()
+                            ?
+                            <Link>
+                              <span> Auction has Ended</span>
+                            </Link>
+                            :
+                            bid > 0
+                              ?
+                              <Link >
+                                <span> Auction has Ended</span>
+                              </Link>
+                              :
+                              <Link >
+                                <span> Take your NFT</span>
+                              </Link>
+
+                      : account?.toString().toLowerCase() === myArray.seller?.toString().toLowerCase()
+                        ?
+                        <Link >
+                          <span>Cancel Listing</span>
+                        </Link>
+                        :
+
+                        <>
+                          <div className="meta-item-details style2">
+                            <div className="item meta-price" style={{ marginLeft: "176px" }}>
+                              <span className="heading">Current Price</span>
+                              <div className="price">
+                                <div className="price-box">
+                                  <h5> {ethers.utils.formatEther(myArray.totalPrice)} ETH</h5>
+                                  <span> = $100.246</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <Link
+                            onClick={() => buyMarketItem(myArray)}
+                            className="sc-button loadmore style bag fl-button pri-3"
+                          >
+                            <span>Buy</span>
+                          </Link>
+                          </>
+
+                    }
+
+
+                  </div>
+
+              </div>
+                  
+                  
+                  {/* //////////////////////////////////////// Bid History Section /////////////////////////////////////// */}
+            </div>
+
+
+                <div className="flat-tabs themesflat-tabs">
+                  <Tabs>
+                    <TabList>
+                      <Tab>Bid History</Tab>
+                      <Tab>Info</Tab>
+                      <Tab>Provenance</Tab>
+                    </TabList>
+
+                    <TabPanel>
+                      <ul className="bid-history-list">
+                        {dataHistory.map((item, index) => (
+                          <li key={index} item={item}>
+                            <div className="content">
+                              <div className="client">
+                                <div className="sc-author-box style-2">
+                                  <div className="author-avatar">
+                                    <Link to="#">
+                                      <img
+                                        src={item.img}
+                                        alt="Axies"
+                                        className="avatar"
+                                      />
+                                    </Link>
+                                    <div className="badge"></div>
                                   </div>
-                                </li>
-                              ))}
-                            </ul>
-                          </TabPanel>
-                          <TabPanel>
-                            <ul className="bid-history-list">
-                              <li>
-                                <div className="content">
-                                  <div className="client">
-                                    <div className="sc-author-box style-2">
-                                      <div className="author-avatar">
-                                        <Link to="#">
-                                          <img
-                                            src={img1}
-                                            alt="Axies"
-                                            className="avatar"
-                                          />
+                                  <div className="author-infor">
+                                    <div className="name">
+                                      <h6>
+                                        <Link to="/authors">
+                                          {item.name}{" "}
                                         </Link>
-                                        <div className="badge"></div>
-                                      </div>
-                                      <div className="author-infor">
-                                        <div className="name">
-                                          <h6>
-                                            {" "}
-                                            <Link to="/authors">
-                                              Mason Woodward{" "}
-                                            </Link>
-                                          </h6>{" "}
-                                          <span> place a bid</span>
-                                        </div>
-                                        <span className="time">8 hours ago</span>
-                                      </div>
+                                      </h6>{" "}
+                                      <span> place a bid</span>
                                     </div>
+                                    <span className="time">{item.time}</span>
                                   </div>
                                 </div>
-                              </li>
-                            </ul>
-                          </TabPanel>
-                          <TabPanel>
-                            <div className="provenance">
-                              <p>
-                                Lorem Ipsum is simply dummy text of the printing and
-                                typesetting industry. Lorem Ipsum has been the
-                                industry's standard dummy text ever since the 1500s,
-                                when an unknown printer took a galley of type and
-                                scrambled it to make a type specimen book. It has
-                                survived not only five centuries, but also the leap
-                                into electronic typesetting, remaining essentially
-                                unchanged. It was popularised in the 1960s with the
-                                release of Letraset sheets containing Lorem Ipsum
-                                passages, and more recently with desktop publishing
-                                software like Aldus PageMaker including versions of
-                                Lorem Ipsum.
-                              </p>
+                              </div>
+                              <div className="price">
+                                <h5>{item.price}</h5>
+                                <span>= {item.priceChange}</span>
+                              </div>
                             </div>
-                          </TabPanel>
-                        </Tabs>
-              </div>
-              
-              
-              
+                          </li>
+                        ))}
+                      </ul>
+                    </TabPanel>
+                    <TabPanel>
+                      <ul className="bid-history-list">
+                        <li>
+                          <div className="content">
+                            <div className="client">
+                              <div className="sc-author-box style-2">
+                                <div className="author-avatar">
+                                  <Link to="#">
+                                    <img
+                                      src={img1}
+                                      alt="Axies"
+                                      className="avatar"
+                                    />
+                                  </Link>
+                                  <div className="badge"></div>
+                                </div>
+                                <div className="author-infor">
+                                  <div className="name">
+                                    <h6>
+                                      {" "}
+                                      <Link to="/authors">
+                                        Mason Woodward{" "}
+                                      </Link>
+                                    </h6>{" "}
+                                    <span> place a bid</span>
+                                  </div>
+                                  <span className="time">8 hours ago</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </TabPanel>
+                    <TabPanel>
+                      <div className="provenance">
+                        <p>
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry. Lorem Ipsum has been the
+                          industry's standard dummy text ever since the 1500s,
+                          when an unknown printer took a galley of type and
+                          scrambled it to make a type specimen book. It has
+                          survived not only five centuries, but also the leap
+                          into electronic typesetting, remaining essentially
+                          unchanged. It was popularised in the 1960s with the
+                          release of Letraset sheets containing Lorem Ipsum
+                          passages, and more recently with desktop publishing
+                          software like Aldus PageMaker including versions of
+                          Lorem Ipsum.
+                        </p>
+                      </div>
+                    </TabPanel>
+                  </Tabs>
+                </div>
+
+
+
               </div>
             </div>
           </div>
         </div>
+
         <LiveAuction data={liveAuctionData} />
         <Footer />
       </div>
