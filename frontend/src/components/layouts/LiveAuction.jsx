@@ -22,7 +22,7 @@ const LiveAuction = (props) => {
           <div className="row">
             <div className="col-md-12">
               <div className="heading-live-auctions">
-                <h2 className="tf-title pb-20">Live Auctions</h2>
+                <h2 className="tf-title pb-20">Listed NFT's</h2>
                 <Link to="/explore-03" className="exp style2">
                   EXPLORE MORE
                 </Link>

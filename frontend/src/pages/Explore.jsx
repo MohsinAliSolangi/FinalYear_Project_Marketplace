@@ -46,12 +46,13 @@ const Explore01 = () => {
       for (let i = 1; i <= itemCount; i++) {
         const item = await SetTransactionSigner().items(i)
         if (!item.sold) {
-          const auction = await SetTransactionSigner().isAuction(item.tokenId.toString())
+          const auction = await SetTransactionSigner().isAuction(i)
           console.log("this is nft ", auction)
           const time = await SetTransactionSigner().getLastTime(item.itemId.toString())
           const temp = Number(time.toString())
           // get uri url from nft contract
-          const uri = await SetNFTContract().tokenURI(item.tokenId)
+          const uri = await SetNFTContract().tokenURI(item.tokenId);
+          console.log("++++++++++++++++++++++uri",uri)
           // use uri to fetch the nft metadata stored on ipfs
           const response = await fetch(uri)
           const metadata = await response.json()

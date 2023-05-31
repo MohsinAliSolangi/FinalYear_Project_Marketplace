@@ -74,7 +74,7 @@ const CreateItem = () => {
      setName("")
      setDescription("") 
      setRoyality("")
-    //  navigate('/my-purchases')
+     navigate('/')
       setLoading(false)
     } catch (error) {
       setLoading(false)

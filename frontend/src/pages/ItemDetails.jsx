@@ -20,6 +20,7 @@ import marketplaceAbi from "../contractsData/MarketPlace.json"
 import NFTAbi from "../contractsData/NFT.json"
 import NFTAddress from "../contractsData/NFT-address.json"
 import { ethers, utils } from "ethers";
+import { Button, Modal } from "react-bootstrap";
 
 
 const SetTransactionSigner = () => {
@@ -55,6 +56,7 @@ const ItemDetails01 = () => {
   const [bidder, setbidder] = useState(null)
   const [NowTime, setNowTime] = useState(0)
   const [account, setAccount] = useState(null)
+  const [Placebid,setplacebid]=useState(false);
   const navigate = useNavigate();
 
 
@@ -111,7 +113,7 @@ const ItemDetails01 = () => {
       setLoading(true)
       await (await SetTransactionSigner().cancelListing(myArray.itemId)).wait();
       setLoading(false);
-      navigate('/my-purchases');
+      navigate('/');
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -125,7 +127,7 @@ const ItemDetails01 = () => {
       setLoading(true);
       await (await SetTransactionSigner().concludeAuction(myArray.itemId, account)).wait();
       setLoading(false);
-      navigate('/my-purchases')
+      navigate('/')
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -138,7 +140,7 @@ const ItemDetails01 = () => {
       setLoading(true);
       await (await SetTransactionSigner().cancellAuction(myArray.itemId, account)).wait();
       setLoading(false);
-      navigate('/my-purchases')
+      navigate('/')
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -153,7 +155,7 @@ const ItemDetails01 = () => {
       console.log("this is item id ", myArray.itemId)
       await (await SetTransactionSigner().purchaseItem(myArray.itemId, { value: myArray.totalPrice })).wait()
       setLoading(false);
-      // navigate('/my-purchases')
+      navigate('/')
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -176,9 +178,7 @@ const ItemDetails01 = () => {
 
   }
 
-  function getData(val) {
-    setPrice(val.target.value)
-  }
+
   console.log("ITEMIDF+++++++", myArray.itemId)
 
   useEffect(() => {
@@ -345,8 +345,8 @@ const ItemDetails01 = () => {
                         ?
                         <div className="price">
                           <div className="price-box">
-                            <h5>{bid}ETH</h5>
-                            <span>= $100.246</span>
+                            <h5> {bid} ETH</h5>
+                            <span>=$100.246</span>
                           </div>
                         </div>
                         :
@@ -363,52 +363,58 @@ const ItemDetails01 = () => {
                       //////yhn pe div's ko det krna hai fr aspe condition lagani hai //////////////////
                         account?.toString().toLowerCase() === myArray.seller?.toString().toLowerCase()
                           ?
+                          <>
                           <div className="item count-down">
                             <span className="heading style-2">Countdown</span>
                             {<Countdown date={Time * 1000} renderer={renderer}/>}
-                            <div>
-                            <Link className="sc-button loadmore style bag fl-button pri-3">
-                              <span>GET NFT</span>
-                            </Link>
                           </div>
-                          </div>
+                          <div>
+                          <Link className="sc-button loadmore style bag fl-button pri-3">
+                            <span>Auction In Progress</span>
+                          </Link>
+                        </div>
+                        </>
                           :
+                          <>
                           <div className="item count-down">
                             <span className="heading style-2">Countdown</span>
-                            {<Countdown date={Time * 1000} renderer={renderer} >
-                              <span>Place Bid</span>
-                            </Countdown>
-                            }
+                            {<Countdown date={Time * 1000} renderer={renderer}/ >  }
                           </div>
+                            <div>
+                              <Link onClick={()=>setplacebid(true)} className="sc-button loadmore style bag fl-button pri-3">
+                                <span>Place a Bid</span>
+                              </Link>
+                            </div>
+                            </>
                         :
 
                         bid > 0 && bidder?.toString().toLowerCase() === account?.toString().toLowerCase()
                           ?
                           <div>
-                            <Link className="sc-button loadmore style bag fl-button pri-3">
+                            <Link onClick={concludeAuction} className="sc-button loadmore style bag fl-button pri-3">
                               <span>GET NFT</span>
                             </Link>
                           </div>
                           :
                           account?.toString().toLowerCase() !== myArray.seller?.toString().toLowerCase()
                             ?
-                            <Link>
+                            <Link  className="sc-button loadmore style bag fl-button pri-3">
                               <span> Auction has Ended</span>
                             </Link>
                             :
                             bid > 0
                               ?
-                              <Link >
+                              <Link  className="sc-button loadmore style bag fl-button pri-3">
                                 <span> Auction has Ended</span>
                               </Link>
                               :
-                              <Link >
-                                <span> Take your NFT</span>
+                              <Link onClick={cancellAuction}  className="sc-button loadmore style bag fl-button pri-3">
+                                <span> Auction End Take Your nft </span>
                               </Link>
 
                       : account?.toString().toLowerCase() === myArray.seller?.toString().toLowerCase()
                         ?
-                        <Link >
+                        <Link onClick={CancelListing} className="sc-button loadmore style bag fl-button pri-3">
                           <span>Cancel Listing</span>
                         </Link>
                         :
@@ -556,6 +562,25 @@ const ItemDetails01 = () => {
 
         <LiveAuction data={liveAuctionData} />
         <Footer />
+
+               {/* Auction Model */}
+               <Modal
+               show={Placebid}
+               onHide={() => setplacebid(false)}
+           >
+               <Modal.Header closeButton></Modal.Header>
+
+               <div className="modal-body space-y-20 pd-40">
+                   <h3>Ether Bid Amount</h3>
+                   <p className="text-center">Bid amount<span className="price color-popup"></span>
+                   </p>
+                   <input type="text" className="form-control"
+                       onChange={(e) => setPrice(e.target.value)}
+                       placeholder="00.00 ETH" />
+
+                   <Button onClick={()=>placeBid(myArray)} className="btn btn-primary" data-toggle="modal" data-target="#popup_bid_success" data-dismiss="modal" aria-label="Close"> Place Bid </Button>
+               </div>
+           </Modal>
       </div>
     </div>
   );

@@ -7,6 +7,8 @@ import marketplaceAbi from "../../../contractsData/MarketPlace.json"
 import NFTAbi from "../../../contractsData/NFT.json"
 import NFTAddress from "../../../contractsData/NFT-address.json"
 import { ethers } from 'ethers';
+import { Button, Modal } from "react-bootstrap";
+import Countdown from "react-countdown";
 
 
 
@@ -42,6 +44,7 @@ const TodayPicks = ({ item, index }) => {
   const [bidder, setbidder] = useState(null)
   const [NowTime, setNowTime] = useState(0)
   const [account, setAccount] = useState(null)
+  const [Placebid, setplacebid] = useState(false);
   const navigate = useNavigate();
 
 
@@ -98,7 +101,7 @@ const TodayPicks = ({ item, index }) => {
       setLoading(true)
       await (await SetTransactionSigner().cancelListing(item.itemId)).wait();
       setLoading(false);
-      navigate('/my-purchases');
+      navigate('/');
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -112,7 +115,7 @@ const TodayPicks = ({ item, index }) => {
       setLoading(true);
       await (await SetTransactionSigner().concludeAuction(item.itemId, account)).wait();
       setLoading(false);
-      navigate('/my-purchases')
+      navigate('/')
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -125,7 +128,7 @@ const TodayPicks = ({ item, index }) => {
       setLoading(true);
       await (await SetTransactionSigner().cancellAuction(item.itemId, account)).wait();
       setLoading(false);
-      navigate('/my-purchases')
+      navigate('/')
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -140,7 +143,7 @@ const TodayPicks = ({ item, index }) => {
       console.log("this is item id ", item)
       await (await SetTransactionSigner().purchaseItem(item, { value: item.totalPrice })).wait()
       setLoading(false);
-      // navigate('/my-purchases')
+      navigate('/')
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -180,6 +183,16 @@ const TodayPicks = ({ item, index }) => {
     setVisible((prevValue) => prevValue + 4);
   };
 
+  const renderer = ({ hours, minutes, seconds, completed }) => {
+    if (completed) {
+      // Render a completed state
+      return 'completed';
+    } else {
+      // Render a countdown
+      return <span>{hours}:{minutes}:{seconds}</span>;
+    }
+  };
+  console.log("item00000000000", item.auction)
   return (
     <Fragment>
       <section className="tf-section sc-explore-1">
@@ -314,22 +327,72 @@ const TodayPicks = ({ item, index }) => {
                       </h6>
                     </div>
                   </div>
-                  <div className="price">
-                    <span>ETH Price</span>
+                  {item.auction ?
+                    <div className="price">
+                      <span>Countdown</span>
+                      <h4>{<Countdown date={Time * 1000} renderer={renderer}/>} </h4>
+                    </div>
+                    :
+                    <div className="price">
+                      <span>ETH Price</span>
+                      <h5>{ethers?.utils?.formatEther(item?.totalPrice?.toString())} </h5>
+                    </div>
+                  }
 
-                    <h5>{ethers?.utils?.formatEther(item?.totalPrice?.toString())} </h5>
-                  </div>
+
                 </div>
-                <div style={{ marginLeft: "100px" }} className="card-bottom">
+
+                {item.auction ?
+
+                  NowTime < Time ?
+                    <div style={{ marginLeft: "100px" }} className="card-bottom">
+                      <button onClick={() => setplacebid(true)}
+                        className="sc-button style bag fl-button pri-3 no-bg">
+                        <span> palce Bid</span>
+                      </button>
+                    </div>
+                    :
+                    <div style={{ marginLeft: "100px" }} className="card-bottom">
+                      <button
+                        className="sc-button style bag fl-button pri-3 no-bg">
+                        <span> Auction has Ended </span>
+                      </button>
+                    </div>
+                  :
+                  <div style={{ marginLeft: "100px" }} className="card-bottom">
+                    <button onClick={() => buyMarketItem(item.itemId)}
+                      className="sc-button style bag fl-button pri-3 no-bg">
+                      <span> Buy </span>
+                    </button>
+                  </div>
+                }
+                {/* <div style={{ marginLeft: "100px" }} className="card-bottom">
                   <button onClick={()=>buyMarketItem(item.itemId)}
-                    className="sc-button style bag fl-button pri-3 no-bg"
-                  >
+                    className="sc-button style bag fl-button pri-3 no-bg">
                     <span> Buy </span>
                   </button>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
+          {/* Auction Model */}
+          <Modal
+            show={Placebid}
+            onHide={() => setplacebid(false)}
+          >
+            <Modal.Header closeButton></Modal.Header>
+
+            <div className="modal-body space-y-20 pd-40">
+              <h3>Ether Bid Amount</h3>
+              <p className="text-center">Bid amount<span className="price color-popup"></span>
+              </p>
+              <input type="text" className="form-control"
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="00.00 ETH" />
+
+              <Button onClick={() => placeBid(item)} className="btn btn-primary" data-toggle="modal" data-target="#popup_bid_success" data-dismiss="modal" aria-label="Close"> Place Bid </Button>
+            </div>
+          </Modal>
         </div>
       </section>
       <CardModal show={modalShow} onHide={() => setModalShow(false)} />

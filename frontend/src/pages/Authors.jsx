@@ -70,6 +70,7 @@ const Authors02 = () => {
        if (account.toString().toLowerCase() == ownerof.toString().toLowerCase()) {
   
             const uri = await SetNFTContract().tokenURI(i)
+            console.log("++++++++++++++++++++++uri",uri)
             // use uri to fetch the nft metadata stored on ipfs 
             const response = await fetch(uri)
             const metadata = await response.json()

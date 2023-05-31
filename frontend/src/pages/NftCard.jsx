@@ -71,7 +71,7 @@ function NftCard({ item, index }) {
     const createAuction = async () => {
         try {
             setLoading(true)
-            await (await nft().setApprovalForAll(item.marketplace, true)).wait()
+            await (await nft().setApprovalForAll(item.marketplace,true)).wait()
             const listingPrice = ethers.utils.parseEther(price)
             const nftId = item.itemId.toString();
             const auctionTime = time;
