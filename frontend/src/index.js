@@ -6,10 +6,10 @@ import ScrollToTop from './ScrollToTop';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
-  <BrowserRouter >
-    <ScrollToTop />
-    <App />
-  </BrowserRouter>,
+  // <BrowserRouter >
+    // <ScrollToTop />
+    <App />,
+  // </BrowserRouter>,
   document.getElementById('root')
 );
 // If you want to start measuring performance in your app, pass a function

@@ -28,6 +28,12 @@ async function main() {
     "Token",Token.address
   );
  
+  for(let i =1;i<20;i++){
+    nft.mint(,"1000")
+  }
+
+
+
   
 
 

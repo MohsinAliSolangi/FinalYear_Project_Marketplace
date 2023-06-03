@@ -9,9 +9,11 @@ contract NFT is ERC721URIStorage {
     uint256 numOfBips;
     address ownerOfNft;
 }
-      mapping(uint256 => Owner) private first_owner;
+    mapping(uint256 => Owner) private first_owner;
     uint public tokenCount;
+    
     constructor() ERC721("Mr,S NFT's", "M/S"){}
+
     function mint(string memory _tokenURI, uint256 _noOfBips) external returns(uint) {
         if(_noOfBips > 1000) {
             revert  BasicNft__RoyalityFeesPercentageLimitExceed();

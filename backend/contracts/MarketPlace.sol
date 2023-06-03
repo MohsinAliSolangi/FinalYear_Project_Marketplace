@@ -261,7 +261,7 @@ contract MarketPlace is ReentrancyGuard {
 
     // item.seller.transfer(item.price);
     // feeAccount.transfer(_totalPrice - item.price);
-    console.log("this is total price ");
+    // console.log("this is total price ");
     address firstOwner = item.nft.getFirstOwner(item.tokenId);
     uint256 royality = item.nft.getRoyalityFees(item.tokenId);   
     

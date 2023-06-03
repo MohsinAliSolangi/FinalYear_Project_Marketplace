@@ -273,6 +273,12 @@
     background: transparent none repeat scroll 0 0;
 }
 
+.is_dark .sc-button.style-2 {
+    border    : 2px solid #5142FC;
+    color     : #fff;
+    background: transparent none repeat scroll 0 0;
+}
+
 .sc-button.style-1:hover span,
 .sc-button.style-1:hover span::before{
     color: var(--primary-color3);
@@ -3573,7 +3579,7 @@ section.today-picks {
 
 .tab-authors .author-profile .infor-profile {
     width       : 54.2%;
-    padding-top : 22px;
+    padding-top : 50px;
     padding-left: 38px;
 }
 
@@ -3625,7 +3631,7 @@ section.today-picks {
 }
 
 .tab-authors .author-profile .infor-profile input {
-    width                : 190px;
+    width                : 550px;
     height               : 36px;
     font-size            : 13px;
     padding              : 13px 19px;
@@ -3645,8 +3651,8 @@ section.today-picks {
     position  : absolute;
     background: transparent;
     border: none;
-    right: 12px;
-    padding: 8px;
+    right: -163px;
+    padding: 0px;
     color: #7A798A;
 }
 

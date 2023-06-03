@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import Header from "../components/header/Header";
 import Footer from "../components/footer/Footer";
-import TodayPicks from "../components/layouts/explore/TodayPicks";
+import TodayPicks from "../components/layouts/TodayPicks";
 import todayPickData from "../assets/fake-data/data-today-pick";
 import marketPlaceAddress from "../contractsData/MarketPlace-address.json";
 import marketplaceAbi from "../contractsData/MarketPlace.json"
@@ -31,8 +32,10 @@ const SetNFTContract = () => {
 
 const { ethereum } = window;
 
-const Explore01 = () => {
-  const [loding, setloding] = useState(false)
+const Explore01 = ({loding,setloding}) => {
+
+  // console.log(loding,setloding)
+  // const [loding, setloding] = useState(false)
   const [Items, setItems] = useState([])
 
 
@@ -41,18 +44,18 @@ const Explore01 = () => {
     try {
       // Load all unsold items
       const itemCount = await SetTransactionSigner().itemCount()
-      console.log(itemCount.toString());
+      // console.log(itemCount.toString());
       let items = []
       for (let i = 1; i <= itemCount; i++) {
         const item = await SetTransactionSigner().items(i)
         if (!item.sold) {
           const auction = await SetTransactionSigner().isAuction(i)
-          console.log("this is nft ", auction)
+          // console.log("this is nft ", auction)
           const time = await SetTransactionSigner().getLastTime(item.itemId.toString())
           const temp = Number(time.toString())
           // get uri url from nft contract
           const uri = await SetNFTContract().tokenURI(item.tokenId);
-          console.log("++++++++++++++++++++++uri",uri)
+          // console.log("++++++++++++++++++++++uri",uri)
           // use uri to fetch the nft metadata stored on ipfs
           const response = await fetch(uri)
           const metadata = await response.json()
@@ -84,11 +87,16 @@ const Explore01 = () => {
     loadMarketplaceItems();
   }, [])
 
-  console.log("Items", Items);
+  // console.log("Items", Items);
+  const location = useLocation();
+  const currentPath = location.pathname;
   return (
     <div>
+    
+      {currentPath === '/explore' && 
+      <>
       <Header />
-      <section className="flat-title-page inner">
+       <section className="flat-title-page inner">
         <div className="overlay"></div>
         <div className="themesflat-container">
           <div className="row">
@@ -106,14 +114,16 @@ const Explore01 = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> 
+      </>}  
       {
         Items.map((item, index) => (
-          <TodayPicks item={item} index={index} />
+          <TodayPicks loding={loding} setloding={setloding} item={item} index={index} />
         ))
 
       }
-      <Footer />
+      {currentPath === '/explore' && <Footer  />}
+      
     </div>
   );
 };

@@ -1,6 +1,5 @@
 import Home from "./Home";
 import Explore from "./Explore";
-import LiveAuctions from "./LiveAuctions";
 import ItemDetails from "./ItemDetails";
 import Authors from "./Authors";
 import WalletConnect from "./WalletConnect";
@@ -11,7 +10,6 @@ import EditProfile from "./EditProfile";
 const routes = [
   { path: "/", component: <Home /> },
   { path: "/explore", component: <Explore /> },
-  { path: "/live-auctions", component: <LiveAuctions /> },
   { path: "/item-details/:item", component: <ItemDetails /> },
   { path: "/authors", component: <Authors /> },
   { path: "/wallet-connect", component: <WalletConnect /> },

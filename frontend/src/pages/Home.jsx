@@ -18,9 +18,10 @@ import marketplaceAbi from  "../contractsData/MarketPlace.json"
 import NFTAbi from "../contractsData/NFT.json"
 import NFTAddress from "../contractsData/NFT-address.json"
 import { ethers } from 'ethers';
+import Loader from '../components/share/Loader';
 
 
-const SetTransactionSigner = ()=>{
+const SetTransactionSigner = () => {
     //Get provider from Metamask
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     // Set signer
@@ -28,114 +29,96 @@ const SetTransactionSigner = ()=>{
     const marketplace = new ethers.Contract(marketPlaceAddress.address, marketplaceAbi.abi, signer)
     return marketplace
   }
-
-const SetNFTContract = ()=>{
+  
+  const SetNFTContract = () => {
     //Get provider from Metamask
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     // Set signer
     const signer = provider.getSigner()
-    const nftcontract = new ethers.Contract(NFTAddress.address,NFTAbi.abi,signer)
+    const nftcontract = new ethers.Contract(NFTAddress.address, NFTAbi.abi, signer)
     return nftcontract
   }
   
   const { ethereum } = window;
 
-const Home01 = () => {
-    const [loding,setloding] = useState(false)
-    const [Items, setItems]= useState([])
+const Home01 = ({account,changeNetwork, loding ,setloding}) => {
+
   
- 
-    
-const getCollection = async()=>{
-    const getListing = await SetTransactionSigner().getListing();
-    
-        console.log("getListing",getListing);
-        // for (let i=0; i<getNftId.length; i++){
-        //    const auction = await SetTransactionSigner()?.isAuction(data.productId,getNftId[i])
-        //    console.log("this is nft ", auction)
-        //     const time = await SetTransactionSigner()?.getLastTime(data.productId,getNftId[i])
-        //     const temp = Number(time)
-        //   const getNFTs = await SetTransactionSigner()?.listing(data.productId,getNftId[i])
-        //   const tokenuri = await SetNFTContract()?.tokenURI(getNftId[i]);
-          
-        //   if(tokenuri.slice(tokenuri.length - 4) == "json") {  
-        //     const response = await fetch(tokenuri)
-        //     const metadata = await response.json()
-            
-         
-        //     if (!getNFTs.sale) {         
-        //       items.push({
-        //         auction: auction,
-        //         time: temp,
-        //         totalPrice: getNFTs.price,
-        //         seller: getNFTs.seller,
-        //         startTime:getNFTs.startTime,
-        //         endTime: getNFTs.endTime,
-        //         cancelListing: getNFTs.cancelListing,
-        //         sale: getNFTs.sale,
-        //         listed: getNFTs.listed,
-        //         TokenId: getNftId[i],
-        //         nftContract: data.productId,
-        //         tokenUri: metadata?.image,
-        //         description: metadata?.description,
-        //         name: metadata?.name,
-        //         attributes:metadata?.attributes
-        //       })
-        //   } 
-          
-        //   }else {
-        //     const link =  `https://ipfs.io/ipfs/${tokenuri.slice(tokenuri.length - 46)}`;
-        //     const response = await fetch(link)
-        //     console.log("++++++++++",response)
-        //     const metadata = await response?.json()  
-        //   if (!getNFTs.sale) {         
-        //       items.push({
-        //         auction: auction,
-        //         time: temp,
-        //         totalPrice: getNFTs.price,
-        //         seller: getNFTs.seller,
-        //         startTime:getNFTs.startTime,
-        //         endTime: getNFTs.endTime,
-        //         cancelListing: getNFTs.cancelListing,
-        //         sale: getNFTs.sale,
-        //         listed: getNFTs.listed,
-        //         TokenId: getNftId[i],
-        //         nftContract: data.productId,
-        //         tokenUri: metadata?.image,
-        //         description: metadata?.description,
-        //         name: metadata?.name,
-        //         attributes:metadata?.attributes
-        //       })
-        //   } 
-        // }
-        // }
-        // console.log("Items",Items);
-        // setItems(items)   
-        // setloding(true);
-
-        }   
-    
-    console.log("mny nft ",Items)
-        useEffect(()=>{
-        // if(!loding)  {
-        getCollection();
-        // }     
-        },[])
+// console.log("hi",changeNetwork)
+  const [Items, setItems] = useState([])
 
 
+
+  const loadMarketplaceItems = async () => {
+    try {
+      // Load all unsold items
+      const itemCount = await SetTransactionSigner().itemCount()
+      // console.log(itemCount.toString());
+      let items = []
+      for (let i = 1; i <= itemCount; i++) {
+        const item = await SetTransactionSigner().items(i)
+        if (!item.sold) {
+          const auction = await SetTransactionSigner().isAuction(i)
+          // console.log("this is nft ", auction)
+          const time = await SetTransactionSigner().getLastTime(item.itemId.toString())
+          const temp = Number(time.toString())
+          // get uri url from nft contract
+          const uri = await SetNFTContract().tokenURI(item.tokenId);
+          // console.log("++++++++++++++++++++++uri",uri)
+          // use uri to fetch the nft metadata stored on ipfs
+          const response = await fetch(uri)
+          const metadata = await response.json()
+          // get total price of item (item price + fee)
+          //get Royality fees in %%%%%%%%%%
+          const royality = await SetNFTContract().getRoyalityFees(item.tokenId);
+          const res = Number(royality.toString()) / 100;
+          items.push({
+            time: temp,
+            auction: auction,
+            totalPrice: item.price,
+            itemId: item.itemId,
+            seller: item.seller,
+            name: metadata.name,
+            description: metadata.description,
+            image: metadata.image,
+            Royality: res
+
+          })
+        }
+      }
+      setItems(items)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    loadMarketplaceItems();
+  }, [])
+
+  // console.log("Items", Items);
 
 
     return (
+      <>
+      {
+        loding && 
+        <Loader/>
+      }
+
         <div className='home-1'>
-            <Header />
-            <Slider data={heroSliderData} />
-            <LiveAuction data={liveAuctionData} />
-            <TopSeller data={topSellerData} />
-            <TodayPicks data={todayPickData} />
-            <PopularCollection data={popularCollectionData} />
-            <Create />
-            <Footer />
-        </div>
+        <Header account={account} changeNetwork={changeNetwork}/>
+        <Slider data={heroSliderData} />
+        {/* <LiveAuction data={Items} /> */}
+        <Expolore loding={loding} setloding={setloding} />
+        <TopSeller data={topSellerData} />
+        <PopularCollection data={popularCollectionData} />
+        <Create />
+        <Footer />
+    </div>
+      
+      </>
+      
     );
 }
 

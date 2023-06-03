@@ -11,9 +11,10 @@ import {useNavigate } from "react-router-dom";
 import { uploadFileToIPFS, uploadJSONToIPFS } from "../pinata";
 import nft from "../contractsData/NFT.json";
 import nftAddr from "../contractsData/NFT-address.json"
+import Loader from "../components/share/Loader";
 
 
-const CreateItem = () => {
+const CreateItem = ({account, changeNetwork, loding ,setloding}) => {
 //start from here  
   const ethers = require("ethers");
 
@@ -21,7 +22,6 @@ const CreateItem = () => {
   const [royality, setRoyality] = useState()
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [loading, setLoading] = useState(false)
   const navigate = useNavigate();
 
   async function OnChangeFile(e) {
@@ -30,15 +30,15 @@ const CreateItem = () => {
   
     if (typeof file !== 'undefined') {
       try {
-        setLoading(true)
+        setloding(true)
         console.log("this is image file ", file);
         const resut = await uploadFileToIPFS(file);
         //const result = await client.add(file)
         console.log("!!!!!!!!!!!!!!!!!!",resut)
         setImage(resut.pinataURL);
-        setLoading(false)
+        setloding(false)
       } catch (error) {
-        setLoading(false)
+        setloding(false)
         console.log("ipfs image upload error: ", error)
       }
     }
@@ -67,7 +67,7 @@ const CreateItem = () => {
 
 
     try {
-      setLoading(true)
+      setloding(true)
       const result = await uploadJSONToIPFS(nftJSON)
      console.log("this is json image format ",result);
      await mintThenList(result)
@@ -75,9 +75,9 @@ const CreateItem = () => {
      setDescription("") 
      setRoyality("")
      navigate('/')
-      setLoading(false)
+     setloding(false)
     } catch (error) {
-      setLoading(false)
+      setloding(false)
 
       console.log("ipfs uri upload error: ", error)
     }
@@ -86,7 +86,7 @@ const CreateItem = () => {
 
   const mintThenList = async (result) => {
     try {
-      setLoading(true)
+      setloding(true)
       
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
@@ -103,12 +103,12 @@ const CreateItem = () => {
      alert("congrates you mint")
      window.location.reload();
     } catch (error) {
-      setLoading(false)
+      setloding(false)
       console.log(error)
     }
   }
 
-console.log("thIS IS image",image)
+// console.log("thIS IS image",image)
 
 
 
@@ -125,8 +125,12 @@ useEffect(()=>{
 
 
   return (
-    <div className="create-item">
-      <Header />
+    <>
+       {loding ?
+      <Loader/>
+      :
+      <div className="create-item">
+      <Header  account={account} changeNetwork={changeNetwork} />
       <section className="flat-title-page inner">
         <div className="overlay"></div>
         <div className="themesflat-container">
@@ -153,11 +157,11 @@ useEffect(()=>{
       <div className="tf-create-item tf-section">
         <div className="themesflat-container">
           <div className="row">
-            <div className="col-xl-3 col-lg-6 col-md-6 col-12">
+            {/* <div className="col-xl-3 col-lg-6 col-md-6 col-12">
               <h4 className="title-create-item">Preview item</h4>
               <div className="sc-card-product">
                 <div className="card-media">
-                  <Link to="/item-details">
+                  <Link>
                     <img src={img1} alt="Axies" />
                   </Link>
                   <Link to="/login" className="wishlist-button heart">
@@ -172,7 +176,7 @@ useEffect(()=>{
                 </div>
                 <div className="card-title">
                   <h5>
-                    <Link to="/item-details">"Cyber Doberman #766”</Link>
+                    <Link>"Cyber Doberman #766”</Link>
                   </h5>
                   <div className="tags">bsc</div>
                 </div>
@@ -206,7 +210,7 @@ useEffect(()=>{
                   </Link>
                 </div>
               </div>
-            </div>
+            </div> */}
             <div className="col-xl-9 col-lg-6 col-md-12 col-12">
               <div className="form-create-item">
                 <form action="#">
@@ -278,7 +282,7 @@ useEffect(()=>{
 
                         </div>
                         <div>                        
-                      <button type="button" onClick={createNFT} style={{ marginTop: "20px" }} className="sc-button header-slider style style-1 note fl-button pri-1">
+                      <button type="button" onClick={createNFT}  style={{ marginTop:"30px"}} className="sc-button header-slider style style-2 note fl-button pri-1">
                     <span>Create</span>
                     </button>
                     </div>
@@ -370,6 +374,10 @@ useEffect(()=>{
       </div>
       <Footer />
     </div>
+    }
+
+    </>
+ 
   );
 };
 

@@ -462,7 +462,7 @@ input,
 textarea,
 select {
     font-size       : 14px;
-    max-width       : 100%;
+    max-width       : 300%;
     background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
 }
 
@@ -1376,7 +1376,7 @@ header{
 
 .main-nav {
     position: absolute;
-    left:26%;
+    left:36%;
     top: 0;
     z-index: 0;
 }
@@ -2082,7 +2082,7 @@ header{
     left      : 0;
     width     : 100%;
     box-shadow: 1px 1px 5px 0px rgb(0 0 0 / 30%);
-    z-index   : 9999;
+    z-index   : 9998;
     background: linear-gradient(
         227.3deg, #8A208C 0%, #181B81 100.84%);
     border: none;

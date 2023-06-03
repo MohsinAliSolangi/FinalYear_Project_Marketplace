@@ -1175,6 +1175,7 @@
 
   .tab-authors .author-profile .avatar {
     position: relative;
+    
   }
 
   .tab-authors .author-profile .avatar{
@@ -1316,6 +1317,8 @@
     right: 15px;
     display: flex;
     flex-direction: column-reverse;
+    
+    
   }
 
   .pad-b-74.mobie-style,
