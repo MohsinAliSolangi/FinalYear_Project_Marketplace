@@ -11,33 +11,6 @@ import shape2 from "../../assets/images/backgroup-secsion/bg-gradient2.png";
 import shape3 from "../../assets/images/backgroup-secsion/bg-gradient3.png";
 import imgbg from "../../assets/images/backgroup-secsion/img_bg_page_title.jpg";
 
-const Slider = (props) => {
-  const data = props.data;
-  return (
-    <div className="mainslider">
-      <Swiper
-        modules={[Navigation, Scrollbar, A11y]}
-        spaceBetween={0}
-        slidesPerView={1}
-        navigation
-        scrollbar={{ draggable: true }}
-      >
-        {data.map((item, index) => (
-          <SwiperSlide key={index} className={item.class}>
-            <SliderItem item={item} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
-    </div>
-  );
-};
-
-Slider.propTypes = {
-  data: PropTypes.array.isRequired,
-  control: PropTypes.bool,
-  auto: PropTypes.bool,
-  timeOut: PropTypes.number,
-};
 const SliderItem = (props) => (
   <div className="flat-title-page" style={{ backgroundImage: `url(${imgbg})` }}>
     <img className="bgr-gradient gradient1" src={shape1} alt="Axies" />
@@ -91,4 +64,33 @@ const SliderItem = (props) => (
     </div>
   </div>
 );
+
+const Slider = (props) => {
+  const data = props.data;
+  return (
+    <div className="mainslider">
+      <Swiper
+        modules={[Navigation, Scrollbar, A11y]}
+        spaceBetween={0}
+        slidesPerView={1}
+        navigation
+        scrollbar={{ draggable: true }}
+      >
+        {data.map((item, index) => (
+          <SwiperSlide key={index} className={item.class}>
+            <SliderItem item={item} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </div>
+  );
+};
+
+Slider.propTypes = {
+  data: PropTypes.array.isRequired,
+  control: PropTypes.bool,
+  auto: PropTypes.bool,
+  timeOut: PropTypes.number,
+};
+
 export default Slider;

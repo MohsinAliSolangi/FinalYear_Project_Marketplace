@@ -1,123 +1,181 @@
-import { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Authors02 from './pages/Authors';
-import CreateItem from './pages/CreateItem';
-import EditProfile from './pages/EditProfile';
-import Explore01 from './pages/Explore';
-import Home01 from './pages/Home';
-import ItemDetails from './pages/ItemDetails';
-import WalletConnect from './pages/WalletConnect';
-import { ethers } from 'ethers';
-import { web3 } from 'web3';
-import './App.css';
-
+import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Authors02 from "./pages/Authors";
+import CreateItem from "./pages/CreateItem";
+import EditProfile from "./pages/EditProfile";
+import Explore01 from "./pages/Explore";
+import Home01 from "./pages/Home";
+import ItemDetails from "./pages/ItemDetails";
+import WalletConnect from "./pages/WalletConnect";
+import { ethers } from "ethers";
+import "./App.css";
 
 const { ethereum } = window;
+
 function App() {
-    const [loding, setloding] = useState(false)
-    const [account, setAccount] = useState(null)
+  const [account, setCurrentAccount] = useState(null);
+  const [loding, setLoading] = useState(false);
 
-    ethereum.on("accountsChanged", async (account) => {
-        setAccount(account[0]);
-        window.location.reload()
-    })
+  useEffect(() => {
+    checkIsWalletConnected();
+  }, [account]);
 
-    const changeNetwork = async () => {
-        try {
-            if (!ethereum) throw new Error("No crypto wallet found");
-            await ethereum.request({
-                method: "wallet_switchEthereumChain",
-                params: [{
-                    chainId: "0x7A69"
-                    // chainId: "0x05"
-                }]
-            });
-            await web3Handler();
-        } catch (err) {
-            console.log(err.message);
+  const connectWallet = async () => {
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+
+    // Check if MetaMask is installed
+    if (typeof window.ethereum !== "undefined") {
+      try {
+        // Check if the wallet is already connected
+        if (!isMobile && !loding) {
+          await ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [
+              {
+                chainId: process.env.REACT_APP_CHAIN_ID, // Replace with your desired chain ID
+              },
+            ],
+          });
+
+          const accounts = await window.ethereum.request({
+            method: "eth_requestAccounts",
+          });
+
+          setCurrentAccount(accounts[0]);
+          setLoading(false);
+        } else if (isMobile) {
+          const accounts = await window.ethereum.request({
+            method: "eth_requestAccounts",
+          });
+          setCurrentAccount(accounts[0]);
+          setLoading(false);
         }
-    };
-    window.ethereum && ethereum.on("chainChanged", async () => {
-        window.location.reload();
-    });
+      } catch (err) {
+        setLoading(false);
+        // toast.error(err.message);
+        console.error(err.message);
+      }
+    } else {
+      if (isMobile) {
+        // Metamask app is not installed, redirect to installation page
+        window.open(
+          "https://metamask.app.link/dapp/https://staking-dapp-project.vercel.app/"
+        );
+        return;
+      } else {
+        // if no window.ethereum and no window.web3, then MetaMask or Trust Wallet is not installed
+        alert(
+          "MetaMask or Trust Wallet is not installed. Please consider installing one of them."
+        );
+        return;
+      }
+    }
+  };
 
-    const checkIsWalletConnected = async () => {
-        try {
-            if (!ethereum) return alert("please install MetaMask");
-            const accounts = await ethereum.request({ method: "eth_accounts" });
-            if (accounts.length) {
-                setAccount(accounts[0]);
-                // Get provider from Metamask
-                const provider = new ethers.providers.Web3Provider(window.ethereum)
-                // Set signer
-                const signer = provider.getSigner()
-                // loadContracts(signer)
-                const accountss = await signer.getAddress();
-                // Use the selected account to fetch the account name
-            } else {
-                console.log("No account Found");
-            }
-        } catch (err) {
-            throw new Error("No ethereum Object");
+  const checkIsWalletConnected = async () => {
+    try {
+      window.ethereum.on("accountsChanged", async function (accounts) {
+        setCurrentAccount(accounts[0]);
+        setLoading(false);
+      });
+      window.ethereum.on("chainChanged", async (chainId) => {
+        if (chainId != process.env.REACT_APP_CHAIN_ID) {
+          await ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [
+              {
+                // chainId: "0x5" //Goerli
+                // chainId: "0x89", //PolygonMainnet
+                // chainId: "0xaa36a7", //sepolia
+                // chainId: "0x1", //Miannet
+                chainId: process.env.REACT_APP_CHAIN_ID, //localHost TODO
+                // chainId:"0x13881" //mumbai
+                // chainId:"0x61"//bnb
+              },
+            ],
+          });
         }
+      });
+      const accounts = await ethereum.request({ method: "eth_accounts" });
+      if (accounts.length) {
+        setCurrentAccount(accounts[0]);
+        setLoading(false);
+      } else {
+        console.log("No account Found");
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err.message);
+      setLoading(false);
     }
+  };
 
-    // MetaMask Login/Connect
-    const web3Handler = async () => {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        setAccount(accounts[0])
-        // Get provider from Metamask
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
-        // Set signer
-        const signer = provider.getSigner()
-        const accountss = await signer.getAddress();
-        // Use the selected account to fetch the account name
-        const UserAccount = await provider.lookupAddress(accountss);
-        const accountName = UserAccount.name;
-        console.log("accountName(((((((((((((((((((((((", UserAccount)
+  return (
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          exact
+          element={
+            <Home01
+              account={account}
+              changeNetwork={connectWallet}
+              loding={loding}
+              setloding={setLoading}
+            />
+          }
+        />
+        <Route
+          path="/explore"
+          exact
+          element={<Explore01 loding={loding} setloding={setLoading} />}
+        />
 
-        window.ethereum.on('chainChanged', (chainId) => {
-            window.location.reload();
-        })
+        <Route
+          path="/item-details/:item"
+          exact
+          element={<ItemDetails loding={loding} setloding={setLoading} />}
+        />
 
-        window.ethereum.on('accountsChanged', async function (accounts) {
-            setAccount(accounts[0])
-            await web3Handler()
-        })
-        // loadContracts(signer)
-    }
+        <Route
+          path="/authors"
+          exact
+          element={
+            <Authors02
+              account={account}
+              changeNetwork={connectWallet}
+              loding={loding}
+              setloding={setLoading}
+            />
+          }
+        />
 
-    const UpdateLoader = (data) => {
-        setloding(data);
-    }
+        {/* <Route path='/wallet-connect' exact element={<WalletConnect loding={loding} setloding={setLoading} />} /> */}
 
-    useEffect(() => {
-        checkIsWalletConnected();
-    }, [account])
-    return (
+        <Route
+          path="/create-item"
+          exact
+          element={
+            <CreateItem
+              account={account}
+              changeNetwork={connectWallet}
+              loding={loding}
+              setloding={setLoading}
+            />
+          }
+        />
 
-
-        <Router>
-            <Routes>
-
-                <Route path='/' exact element={<Home01 account={account} changeNetwork={changeNetwork} loding={loding} setloding={UpdateLoader} />} />
-                <Route path='/explore' exact element={<Explore01 loding={loding} setloding={UpdateLoader} />} />
-
-                <Route path='/item-details/:item' exact element={<ItemDetails loding={loding} setloding={UpdateLoader} />} />
-
-                <Route path='/authors' exact element={<Authors02 account={account} changeNetwork={changeNetwork} loding={loding} setloding={UpdateLoader} />} />
-
-                {/* <Route path='/wallet-connect' exact element={<WalletConnect loding={loding} setloding={UpdateLoader} />} /> */}
-
-                <Route path='/create-item' exact element={<CreateItem  account={account} changeNetwork={changeNetwork} loding={loding} setloding={UpdateLoader} />} />
-
-                <Route path='/edit-profile' exact element={<EditProfile loding={loding} setloding={UpdateLoader} />} />
-
-            </Routes>
-        </Router>
-
-
-    );
+        <Route
+          path="/edit-profile"
+          exact
+          element={<EditProfile loding={loding} setloding={setLoading} />}
+        />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;
