@@ -6,7 +6,6 @@ import EditProfile from "./pages/EditProfile";
 import Explore01 from "./pages/Explore";
 import Home01 from "./pages/Home";
 import ItemDetails from "./pages/ItemDetails";
-import WalletConnect from "./pages/WalletConnect";
 import { ethers } from "ethers";
 import "./App.css";
 
