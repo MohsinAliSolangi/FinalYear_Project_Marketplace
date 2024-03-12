@@ -1,73 +1,97 @@
-import React, { useEffect, useState } from 'react';
-import Header from '../components/header/Header';
-import Footer from '../components/footer/Footer';
-import heroSliderData from '../assets/fake-data/data-slider';
-import Slider from '../components/slider/Slider';
-import liveAuctionData from '../assets/fake-data/data-live-auction';
-import LiveAuction from '../components/layouts/LiveAuction';
-import TopSeller from '../components/layouts/TopSeller';
-import topSellerData from '../assets/fake-data/data-top-seller'
-import TodayPicks from '../components/layouts/TodayPicks';
-import todayPickData from '../assets/fake-data/data-today-pick';
-import PopularCollection from '../components/layouts/PopularCollection';
-import popularCollectionData from '../assets/fake-data/data-popular-collection';
-import Create from '../components/layouts/Create';
-import Expolore from './Explore'
+import React, { useEffect, useState } from "react";
+import Header from "../components/header/Header";
+import Footer from "../components/footer/Footer";
+import heroSliderData from "../assets/fake-data/data-slider";
+import Slider from "../components/slider/Slider";
+import liveAuctionData from "../assets/fake-data/data-live-auction";
+import LiveAuction from "../components/layouts/LiveAuction";
+import TopSeller from "../components/layouts/TopSeller";
+import topSellerData from "../assets/fake-data/data-top-seller";
+// import TodayPicks from "../components/layouts/TodayPicks";
+import todayPickData from "../assets/fake-data/data-today-pick";
+import PopularCollection from "../components/layouts/PopularCollection";
+import popularCollectionData from "../assets/fake-data/data-popular-collection";
+import Create from "../components/layouts/Create";
+import Expolore from "./Explore";
 import marketPlaceAddress from "../contractsData/MarketPlace-address.json";
-import marketplaceAbi from  "../contractsData/MarketPlace.json"
-import NFTAbi from "../contractsData/NFT.json"
-import NFTAddress from "../contractsData/NFT-address.json"
-import { ethers } from 'ethers';
-import Loader from '../components/share/Loader';
+import marketplaceAbi from "../contractsData/MarketPlace.json";
+import NFTAbi from "../contractsData/NFT.json";
+import NFTAddress from "../contractsData/NFT-address.json";
+import { ethers } from "ethers";
+import Loader from "../components/share/Loader";
 
+const { ethereum } = window;
 
 const SetTransactionSigner = () => {
-    //Get provider from Metamask
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    // Set signer
-    const signer = provider.getSigner()
-    const marketplace = new ethers.Contract(marketPlaceAddress.address, marketplaceAbi.abi, signer)
-    return marketplace
+  if (typeof window.ethereum !== "undefined") {
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const marketplace = new ethers.Contract(
+      marketPlaceAddress.address,
+      marketplaceAbi.abi,
+      signer
+    );
+    return marketplace;
+  } else {
+    const providers = process.env.REACT_APP_RPCADDRESS;
+    const provider = new ethers.providers.JsonRpcProvider(providers);
+    const marketplace = new ethers.Contract(
+      marketPlaceAddress.address,
+      marketplaceAbi.abi,
+      provider
+    );
+    return marketplace;
   }
-  
-  const SetNFTContract = () => {
-    //Get provider from Metamask
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    // Set signer
-    const signer = provider.getSigner()
-    const nftcontract = new ethers.Contract(NFTAddress.address, NFTAbi.abi, signer)
-    return nftcontract
+};
+
+const SetNFTContract = () => {
+  if (typeof window.ethereum !== "undefined") {
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const nftcontract = new ethers.Contract(
+      NFTAddress.address,
+      NFTAbi.abi,
+      signer
+    );
+    return nftcontract;
+  } else {
+    const providers = process.env.REACT_APP_RPCADDRESS;
+    const provider = new ethers.providers.JsonRpcProvider(providers);
+    const nftcontract = new ethers.Contract(
+      NFTAddress.address,
+      NFTAbi.abi,
+      provider
+    );
+    return nftcontract;
   }
-  
-  const { ethereum } = window;
+};
 
-const Home01 = ({account,changeNetwork, loding ,setloding}) => {
-
-  
-// console.log("hi",changeNetwork)
-  const [Items, setItems] = useState([])
-
-
+const Home01 = ({  checkIsWalletConnected, account, changeNetwork, loding, setloding }) => {
+  // console.log("hi",changeNetwork)
+  const [Items, setItems] = useState([]);
 
   const loadMarketplaceItems = async () => {
+    console.log("sdlaldajdladlja", await SetTransactionSigner().itemCount());
     try {
       // Load all unsold items
-      const itemCount = await SetTransactionSigner().itemCount()
-      // console.log(itemCount.toString());
-      let items = []
+      const itemCount = await SetTransactionSigner().itemCount();
+      console.log(itemCount.toString(), "checccccccch");
+      let items = [];
       for (let i = 1; i <= itemCount; i++) {
-        const item = await SetTransactionSigner().items(i)
+        const item = await SetTransactionSigner().items(i);
         if (!item.sold) {
-          const auction = await SetTransactionSigner().isAuction(i)
+          const auction = await SetTransactionSigner().isAuction(i);
           // console.log("this is nft ", auction)
-          const time = await SetTransactionSigner().getLastTime(item.itemId.toString())
-          const temp = Number(time.toString())
+          const time = await SetTransactionSigner().getLastTime(
+            item.itemId.toString()
+          );
+          const temp = Number(time.toString());
           // get uri url from nft contract
           const uri = await SetNFTContract().tokenURI(item.tokenId);
           // console.log("++++++++++++++++++++++uri",uri)
           // use uri to fetch the nft metadata stored on ipfs
-          const response = await fetch(uri)
-          const metadata = await response.json()
+          const response = await fetch(uri);
+          const metadata = await response.json();
           // get total price of item (item price + fee)
           //get Royality fees in %%%%%%%%%%
           const royality = await SetNFTContract().getRoyalityFees(item.tokenId);
@@ -81,33 +105,29 @@ const Home01 = ({account,changeNetwork, loding ,setloding}) => {
             name: metadata.name,
             description: metadata.description,
             image: metadata.image,
-            Royality: res
-
-          })
+            Royality: res,
+          });
         }
       }
-      setItems(items)
+      setItems(items);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
+    checkIsWalletConnected();
     loadMarketplaceItems();
-  }, [])
+  }, [account]);
 
-  // console.log("Items", Items);
+  console.log("Items", Items);
 
+  return (
+    <>
+      {loding && <Loader />}
 
-    return (
-      <>
-      {
-        loding && 
-        <Loader/>
-      }
-
-        <div className='home-1'>
-        <Header account={account} changeNetwork={changeNetwork}/>
+      <div className="home-1">
+        <Header account={account} changeNetwork={changeNetwork} />
         <Slider data={heroSliderData} />
         {/* <LiveAuction data={Items} /> */}
         <Expolore loding={loding} setloding={setloding} />
@@ -115,11 +135,9 @@ const Home01 = ({account,changeNetwork, loding ,setloding}) => {
         <PopularCollection data={popularCollectionData} />
         <Create />
         <Footer />
-    </div>
-      
-      </>
-      
-    );
-}
+      </div>
+    </>
+  );
+};
 
 export default Home01;

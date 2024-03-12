@@ -9,32 +9,46 @@ import avt from '../assets/images/avatar/avt-auth.jpg'
 import NFTAbi from "../contractsData/NFT.json"
 import NFTAddress from "../contractsData/NFT-address.json"
 import marketPlaceAddress from "../contractsData/MarketPlace-address.json"
-import marketPlaceAbi from  "../contractsData/MarketPlace.json"
+import marketplaceAbi from  "../contractsData/MarketPlace.json"
 import { ethers } from 'ethers';
 import { Button, Modal } from 'react-bootstrap';
 import Loader from '../components/share/Loader';
 
+const { ethereum } = window;
 
-const SetNFTContract = ()=>{
-    //Get provider from Metamask
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    // Set signer
-    const signer = provider.getSigner()
-    const nftcontract = new ethers.Contract(NFTAddress.address,NFTAbi.abi,signer)
+const SetNFTContract = () => {
+  if(typeof window.ethereum !== "undefined"){
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const nftcontract = new ethers.Contract(NFTAddress.address, NFTAbi.abi, signer)
     return nftcontract
-  }
+}
+else {
+    const providers = process.env.REACT_APP_RPCADDRESS;
+    const provider = new ethers.providers.JsonRpcProvider(providers);
+    const nftcontract = new ethers.Contract(NFTAddress.address, NFTAbi.abi, provider)
+    return nftcontract
+}
+}
 
-const SetTransactionSigner = ()=>{
-    //Get provider from Metamask
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    // Set signer
-    const signer = provider.getSigner()
-    const marketplace = new ethers.Contract(marketPlaceAddress.address, marketPlaceAbi.abi, signer)
-    return marketplace
-   }
+
+  const SetTransactionSigner = () => {
+    if(typeof window.ethereum !== "undefined"){
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const marketplace = new ethers.Contract(marketPlaceAddress.address, marketplaceAbi.abi, signer)
+  return marketplace
+    }
+    else {
+        const providers = process.env.REACT_APP_RPCADDRESS;
+        const provider = new ethers.providers.JsonRpcProvider(providers);
+         const marketplace = new ethers.Contract(marketPlaceAddress.address, marketplaceAbi.abi, provider)
+  return marketplace
+    }
+  }
   
-  const { ethereum } = window;
-const Authors02 = ({account,loding,changeNetwork ,setloding}) => {
+ 
+const Authors02 = ({checkIsWalletConnected, account,loding,changeNetwork ,setloding}) => {
     const [modalShow, setModalShow] = useState(false);
     const [BidModalShow, setBidModalShow] = useState(false);
     const [FixModalShow, setFixModalShow] = useState(false);
@@ -85,6 +99,7 @@ const Authors02 = ({account,loding,changeNetwork ,setloding}) => {
   
     useEffect(() => {
       loadPurchasedItems();
+      checkIsWalletConnected();
      },[account])
 
      useEffect(() => {

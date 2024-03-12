@@ -11,26 +11,52 @@ import { Button, Modal } from "react-bootstrap";
 import Countdown from "react-countdown";
 import Loader from "../share/Loader";
 
-
-const SetTransactionSigner = () => {
-  //Get provider from Metamask
-  const provider = new ethers.providers.Web3Provider(window.ethereum)
-  // Set signer
-  const signer = provider.getSigner()
-  const marketplace = new ethers.Contract(marketPlaceAddress.address, marketplaceAbi.abi, signer)
-  return marketplace
-}
+const { ethereum } = window;
 
 const SetNFTContract = () => {
-  //Get provider from Metamask
-  const provider = new ethers.providers.Web3Provider(window.ethereum)
-  // Set signer
-  const signer = provider.getSigner()
-  const nftcontract = new ethers.Contract(NFTAddress.address, NFTAbi.abi, signer)
-  return nftcontract
-}
+  if (typeof window.ethereum !== "undefined") {
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const nftcontract = new ethers.Contract(
+      NFTAddress.address,
+      NFTAbi.abi,
+      signer
+    );
+    return nftcontract;
+  } else {
+    const providers = process.env.REACT_APP_RPCADDRESS;
+    const provider = new ethers.providers.JsonRpcProvider(providers);
+    const nftcontract = new ethers.Contract(
+      NFTAddress.address,
+      NFTAbi.abi,
+      provider
+    );
+    return nftcontract;
+  }
+};
 
-const { ethereum } = window;
+const SetTransactionSigner = () => {
+  if (typeof window.ethereum !== "undefined") {
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const marketplace = new ethers.Contract(
+      marketPlaceAddress.address,
+      marketplaceAbi.abi,
+      signer
+    );
+    return marketplace;
+  } else {
+    const providers = process.env.REACT_APP_RPCADDRESS;
+    const provider = new ethers.providers.JsonRpcProvider(providers);
+    const marketplace = new ethers.Contract(
+      marketPlaceAddress.address,
+      marketplaceAbi.abi,
+      provider
+    );
+    return marketplace;
+  }
+};
+
 
 const TodayPicks = ({ loding, setloding, item, index }) => {
 

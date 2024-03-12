@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/header/Header";
 import Footer from "../components/footer/Footer";
@@ -6,10 +6,11 @@ import avt from "../assets/images/avatar/avt-1.jpg";
 import bg1 from "../assets/images/backgroup-secsion/img_bg_page_title.jpg";
 import bg2 from "../assets/images/backgroup-secsion/img_bg_page_title.jpg";
 
-const EditProfile = () => {
+const EditProfile = ({checkIsWalletConnected, account, changeNetwork}) => {
+  useEffect(()=>{checkIsWalletConnected()},[account])
   return (
     <div>
-      <Header />
+      <Header account={account} changeNetwork={changeNetwork} />
       <section className="flat-title-page inner">
         <div className="overlay"></div>
         <div className="themesflat-container">

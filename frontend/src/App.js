@@ -45,16 +45,16 @@ function App() {
           });
 
           setCurrentAccount(accounts[0]);
-          setLoading(false);
+          // setLoading(false);
         } else if (isMobile) {
           const accounts = await window.ethereum.request({
             method: "eth_requestAccounts",
           });
           setCurrentAccount(accounts[0]);
-          setLoading(false);
+          // setLoading(false);
         }
       } catch (err) {
-        setLoading(false);
+        // setLoading(false);
         // toast.error(err.message);
         console.error(err.message);
       }
@@ -79,7 +79,7 @@ function App() {
     try {
       window.ethereum.on("accountsChanged", async function (accounts) {
         setCurrentAccount(accounts[0]);
-        setLoading(false);
+        // setLoading(false);
       });
       window.ethereum.on("chainChanged", async (chainId) => {
         if (chainId != process.env.REACT_APP_CHAIN_ID) {
@@ -102,14 +102,14 @@ function App() {
       const accounts = await ethereum.request({ method: "eth_accounts" });
       if (accounts.length) {
         setCurrentAccount(accounts[0]);
-        setLoading(false);
+        // setLoading(false);
       } else {
         console.log("No account Found");
-        setLoading(false);
+        // setLoading(false);
       }
     } catch (err) {
       console.log(err.message);
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -121,6 +121,7 @@ function App() {
           exact
           element={
             <Home01
+            checkIsWalletConnected={checkIsWalletConnected}
               account={account}
               changeNetwork={connectWallet}
               loding={loding}
@@ -131,13 +132,13 @@ function App() {
         <Route
           path="/explore"
           exact
-          element={<Explore01 loding={loding} setloding={setLoading} />}
+          element={<Explore01  checkIsWalletConnected={checkIsWalletConnected} account={account} changeNetwork={connectWallet} loding={loding} setloding={setLoading} />}
         />
 
         <Route
           path="/item-details/:item"
           exact
-          element={<ItemDetails loding={loding} setloding={setLoading} />}
+          element={<ItemDetails checkIsWalletConnected={checkIsWalletConnected} account={account} changeNetwork={connectWallet} loding={loding} setloding={setLoading} />}
         />
 
         <Route
@@ -145,6 +146,7 @@ function App() {
           exact
           element={
             <Authors02
+            checkIsWalletConnected={checkIsWalletConnected}
               account={account}
               changeNetwork={connectWallet}
               loding={loding}
@@ -160,6 +162,7 @@ function App() {
           exact
           element={
             <CreateItem
+            checkIsWalletConnected={checkIsWalletConnected}
               account={account}
               changeNetwork={connectWallet}
               loding={loding}
@@ -171,7 +174,7 @@ function App() {
         <Route
           path="/edit-profile"
           exact
-          element={<EditProfile loding={loding} setloding={setLoading} />}
+          element={<EditProfile  checkIsWalletConnected={checkIsWalletConnected} account={account} changeNetwork={connectWallet} loding={loding} setloding={setLoading} />}
         />
       </Routes>
     </Router>
