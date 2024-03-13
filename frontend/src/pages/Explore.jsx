@@ -148,14 +148,7 @@ const Explore01 = ({
           </section>
         </>
       )}
-      {Items?.map((item, index) => (
-        <TodayPicks
-          loding={loding}
-          setloding={setloding}
-          item={item}
-          index={index}
-        />
-      ))}
+        <TodayPicks loding={loding} setloding={setloding} Items={Items} />
       {currentPath === "/explore" && <Footer />}
     </div>
   );
