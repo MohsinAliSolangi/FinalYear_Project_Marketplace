@@ -15,9 +15,6 @@ function App() {
   const [account, setCurrentAccount] = useState(null);
   const [loding, setLoading] = useState(false);
 
-  useEffect(() => {
-    checkIsWalletConnected();
-  }, [account]);
 
   const connectWallet = async () => {
     const isMobile =
@@ -112,6 +109,11 @@ function App() {
     }
   };
 
+  
+  useEffect(() => {
+    checkIsWalletConnected();
+  }, [account]);
+
   return (
     <Router>
       <Routes>
@@ -120,7 +122,7 @@ function App() {
           exact
           element={
             <Home01
-            checkIsWalletConnected={checkIsWalletConnected}
+            setCurrentAccount={setCurrentAccount}
               account={account}
               changeNetwork={connectWallet}
               loding={loding}
@@ -131,7 +133,7 @@ function App() {
         <Route
           path="/explore"
           exact
-          element={<Explore01  checkIsWalletConnected={checkIsWalletConnected} account={account} changeNetwork={connectWallet} loding={loding} setloding={setLoading} />}
+          element={<Explore01 setCurrentAccount={setCurrentAccount} account={account} changeNetwork={connectWallet} loding={loding} setloding={setLoading} />}
         />
 
         <Route

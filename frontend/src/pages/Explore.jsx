@@ -57,13 +57,13 @@ const SetTransactionSigner = () => {
 };
 
 const Explore01 = ({
-  // checkIsWalletConnected,
+  setCurrentAccount,
   account,
   changeNetwork,
   loding,
   setloding,
 }) => {
-  // console.log(loding,setloding)
+  
   // const [loding, setloding] = useState(false)
   const [Items, setItems] = useState([]);
 
@@ -71,23 +71,24 @@ const Explore01 = ({
     try {
       // Load all unsold items
       const itemCount = await SetTransactionSigner().itemCount();
-      console.log(itemCount.toString(), "adadasada");
+      console.log(SetNFTContract(), "adadasada");
       let items = [];
       for (let i = 1; i <= itemCount; i++) {
-        const item = await SetTransactionSigner()?.items(i);
+        const item = await SetTransactionSigner().items(i);
         if (!item?.sold) {
-          const auction = await SetTransactionSigner()?.isAuction(i);
+          const auction = await SetTransactionSigner().isAuction(i);
           // console.log("this is nft ", auction)
-          const time = await SetTransactionSigner()?.getLastTime(
+          const time = await SetTransactionSigner().getLastTime(
             item?.itemId?.toString()
           );
           const temp = Number(time?.toString());
+          console.log("++++++++++++++++++++++")
           // get uri url from nft contract
-          const uri = await SetNFTContract()?.tokenURI(item?.tokenId);
-          // console.log("++++++++++++++++++++++uri",uri)
+          const uri = await SetNFTContract().tokenURI(item?.tokenId);
+          console.log("++++++++++++++++++++++uri",uri)
           // use uri to fetch the nft metadata stored on ipfs
           const response = await fetch(uri);
-          const metadata = await response.json();
+          const metadata = await response?.json();
           // get total price of item (item price + fee)
           //get Royality fees in %%%%%%%%%%
           const royality = await SetNFTContract().getRoyalityFees(
@@ -107,14 +108,56 @@ const Explore01 = ({
           });
         }
       }
+      console.log(items,"itemsitemsitemsitemsitems")
       setItems(items);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const checkIsWalletConnected = async () => {
+    try {
+      console.log(process.env.REACT_APP_CHAIN_ID)
+      window.ethereum.on("accountsChanged", async function (accounts) {
+        setCurrentAccount(accounts[0]);
+        // setLoading(false);
+      });
+      window.ethereum.on("chainChanged", async (chainId) => {
+        console.log(process.env.REACT_APP_CHAIN_ID,"process.env.REACT_APP_CHAIN_ID")
+        if (chainId != process.env.REACT_APP_CHAIN_ID) {
+          await ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [
+              {
+                // chainId: "0x5" //Goerli
+                // chainId: "0x89", //PolygonMainnet
+                // chainId: "0xaa36a7", //sepolia
+                // chainId: "0x1", //Miannet
+                chainId: process.env.REACT_APP_CHAIN_ID, //localHost TODO
+                // chainId:"0x13881" //mumbai
+                // chainId:"0x61"//bnb
+              },
+            ],
+          });
+        }
+      });
+      const accounts = await ethereum.request({ method: "eth_accounts" });
+      if (accounts.length) {
+        setCurrentAccount(accounts[0]);
+        // setLoading(false);
+      } else {
+        console.log("No account Found");
+        // setLoading(false);
+      }
+    } catch (err) {
+      console.log(err.message);
+      // setLoading(false);
+    }
+  };
+
+
   useEffect(() => {
-    // checkIsWalletConnected();
+    checkIsWalletConnected();
     loadMarketplaceItems();
   }, [account]);
 

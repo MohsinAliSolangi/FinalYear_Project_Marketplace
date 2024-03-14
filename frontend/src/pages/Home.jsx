@@ -66,7 +66,7 @@ const SetNFTContract = () => {
   }
 };
 
-const Home01 = ({  checkIsWalletConnected, account, changeNetwork, loding, setloding }) => {
+const Home01 = ({setCurrentAccount, account, changeNetwork, loding, setloding }) => {
   // console.log("hi",changeNetwork)
   const [Items, setItems] = useState([]);
 
@@ -75,7 +75,7 @@ const Home01 = ({  checkIsWalletConnected, account, changeNetwork, loding, setlo
     try {
       // Load all unsold items
       const itemCount = await SetTransactionSigner().itemCount();
-      console.log(itemCount.toString(), "checccccccch");
+      console.log(itemCount?.toString(), "checccccccch");
       let items = [];
       for (let i = 1; i <= itemCount; i++) {
         const item = await SetTransactionSigner().items(i);
@@ -83,28 +83,28 @@ const Home01 = ({  checkIsWalletConnected, account, changeNetwork, loding, setlo
           const auction = await SetTransactionSigner().isAuction(i);
           // console.log("this is nft ", auction)
           const time = await SetTransactionSigner().getLastTime(
-            item.itemId.toString()
+            item?.itemId?.toString()
           );
-          const temp = Number(time.toString());
+          const temp = Number(time?.toString());
           // get uri url from nft contract
-          const uri = await SetNFTContract().tokenURI(item.tokenId);
-          // console.log("++++++++++++++++++++++uri",uri)
+          const uri = await SetNFTContract().tokenURI(item?.tokenId);
+          console.log("sdasdadaduri",uri)
           // use uri to fetch the nft metadata stored on ipfs
           const response = await fetch(uri);
-          const metadata = await response.json();
+          const metadata = await response?.json();
           // get total price of item (item price + fee)
           //get Royality fees in %%%%%%%%%%
-          const royality = await SetNFTContract().getRoyalityFees(item.tokenId);
-          const res = Number(royality.toString()) / 100;
+          const royality = await SetNFTContract().getRoyalityFees(item?.tokenId);
+          const res = Number(royality?.toString()) / 100;
           items.push({
             time: temp,
             auction: auction,
-            totalPrice: item.price,
-            itemId: item.itemId,
-            seller: item.seller,
-            name: metadata.name,
-            description: metadata.description,
-            image: metadata.image,
+            totalPrice: item?.price,
+            itemId: item?.itemId,
+            seller: item?.seller,
+            name: metadata?.name,
+            description: metadata?.description,
+            image: metadata?.image,
             Royality: res,
           });
         }
@@ -114,6 +114,45 @@ const Home01 = ({  checkIsWalletConnected, account, changeNetwork, loding, setlo
       console.log(error);
     }
   };
+
+  const checkIsWalletConnected = async () => {
+    try {
+      window.ethereum.on("accountsChanged", async function (accounts) {
+        setCurrentAccount(accounts[0]);
+        // setLoading(false);
+      });
+      window.ethereum.on("chainChanged", async (chainId) => {
+        if (chainId != process.env.REACT_APP_CHAIN_ID) {
+          await ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [
+              {
+                // chainId: "0x5" //Goerli
+                // chainId: "0x89", //PolygonMainnet
+                // chainId: "0xaa36a7", //sepolia
+                // chainId: "0x1", //Miannet
+                chainId: process.env.REACT_APP_CHAIN_ID, //localHost TODO
+                // chainId:"0x13881" //mumbai
+                // chainId:"0x61"//bnb
+              },
+            ],
+          });
+        }
+      });
+      const accounts = await ethereum.request({ method: "eth_accounts" });
+      if (accounts.length) {
+        setCurrentAccount(accounts[0]);
+        // setLoading(false);
+      } else {
+        console.log("No account Found");
+        // setLoading(false);
+      }
+    } catch (err) {
+      console.log(err.message);
+      // setLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     checkIsWalletConnected();
@@ -130,7 +169,7 @@ const Home01 = ({  checkIsWalletConnected, account, changeNetwork, loding, setlo
         <Header account={account} changeNetwork={changeNetwork} />
         <Slider data={heroSliderData} />
         {/* <LiveAuction data={Items} /> */}
-        <Expolore loding={loding} setloding={setloding} />
+        <Expolore account={account} changeNetwork={changeNetwork} setCurrentAccount={setCurrentAccount} loding={loding} setloding={setloding} />
         <TopSeller data={topSellerData} />
         <PopularCollection data={popularCollectionData} />
         <Create />

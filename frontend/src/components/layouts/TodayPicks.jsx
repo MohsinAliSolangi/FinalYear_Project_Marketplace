@@ -4,7 +4,7 @@ import Loader from "../share/Loader";
 import PicCard from "./PicCard";
 
 const TodayPicks = ({ loding, setloding, Items }) => {
-
+  console.log(Items, "ItemsItemsItemsItemsItems");
   return (
     <>
       {loding ? (
@@ -106,18 +106,18 @@ const TodayPicks = ({ loding, setloding, Items }) => {
                         </ul>
                       </div>
                     </div>
-                    <div>
-                    {Items?.map((item, index) => (
-                  <PicCard
-                    loding={loding}
-                    setloding={setloding}
-                    item={item}
-                    index={index}
-                  />
-                ))}
-                    </div>
+                    <div></div>
                   </div>
-
+                  <div className="row">
+                    {Items?.map((item, index) => (
+                        <PicCard
+                          loding={loding}
+                          setloding={setloding}
+                          item={item}
+                          index={index}
+                        />
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

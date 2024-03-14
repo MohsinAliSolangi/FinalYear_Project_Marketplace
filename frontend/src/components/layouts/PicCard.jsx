@@ -110,7 +110,7 @@ console.log(item,"dadadadad")
     }
   };
 
-  const getHigestBidder = async (item) => {
+  const getHigestBidder = async () => {
     try {
       let bidder = await SetTransactionSigner().getHighestBidder(item.itemId);
       setbidder(bidder);
@@ -219,7 +219,7 @@ console.log(item,"dadadadad")
   };
 
   return (
-    <div>
+    <>
       {/* start from here */}
       <div className="fl-item col-xl-3 col-lg-4 col-md-6 col-sm-6">
         <div
@@ -326,7 +326,7 @@ console.log(item,"dadadadad")
         </div>
       </Modal>
       <CardModal show={modalShow} onHide={() => setModalShow(false)} />
-    </div>
+    </>
   );
 };
 

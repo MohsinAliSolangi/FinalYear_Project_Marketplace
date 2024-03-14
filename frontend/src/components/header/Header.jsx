@@ -12,7 +12,7 @@ import { ethers } from 'ethers';
 const { ethereum } = window;
 
 
-const Header = ({account, changeNetwork}) => {
+const Header = ({ account, changeNetwork}) => {
    const { pathname } = useLocation();
   
     const headerRef = useRef(null);
@@ -51,8 +51,7 @@ const Header = ({account, changeNetwork}) => {
         setActiveIndex(index);
     };
 
-
-
+    
     return (
         <header id="header_main" className="header_1 js-header" ref={headerRef}>
             <div className="themesflat-container">
